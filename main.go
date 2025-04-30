@@ -1,53 +1,29 @@
 package main
 
 import (
+	"net/http"
+	"github.com/gin-gonic/gin"
+	"flag"
 	"fmt"
-	"net"
 )
 
+func respond(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "pong",
+	})
+}
+
+func setupRouter() *gin.Engine {
+	r := gin.Default()
+	r.GET("/ping", respond)
+	return r
+}
+
 func main() {
-	ParseHTTPRequest("guh?")
+	wordPtr := flag.String("port", "2100", "port to bind proxy to")
+	flag.Parse()
 
-	laddr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:2100")
-	if err != nil { // unrecoverable
-		panic(err)
-	}
-
-	ln, err := net.ListenTCP("tcp", laddr) // TODO: change to have arbitrary port from commandline args
-	if err != nil {                        // unrecoverable
-		panic(err)
-	}
-	defer ln.Close()
-
-	for {
-		handleClient(ln)
-	}
+	r := setupRouter()
+	r.Run(fmt.Sprintf(":%s", *wordPtr))
 }
 
-func handleClient(ln *net.TCPListener) {
-	conn, err := ln.Accept()
-
-	if err != nil {
-		fmt.Println("guh!")
-		panic(err)
-	}
-	defer conn.Close()
-
-	b, err := readClientData(conn)
-	if err != nil {
-		fmt.Println("guh!!")
-		panic(err)
-	}
-
-	ParseHTTPRequest(string(b))
-}
-
-func readClientData(conn net.Conn) ([]byte, error) {
-	// TODO: change to only read up until HTTP terminator
-	b := make([]byte, 2048)
-	nbytes, err := conn.Read(b)
-	if err != nil {
-		return b, err
-	}
-	return b[:nbytes], nil
-}
