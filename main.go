@@ -1,14 +1,17 @@
 package main
 
 import (
-	"net/http"
+	//"net/http"
 	"github.com/gin-gonic/gin"
 	"flag"
 	"fmt"
-	"io"
+	//"io"
 )
 
 func guy(c *gin.Context) {
+	fmt.Println("GUY CALLED!!!!!!!!!\n\n");
+
+	/*
 	fmt.Println("c.FullPath(): ", c.FullPath())
 	fmt.Println("c.request.URL: ", c.Request.URL)
 	fmt.Println("c.request.URL.path: ", c.Request.URL.Path)
@@ -25,15 +28,17 @@ func guy(c *gin.Context) {
 
 	fmt.Println("status for client: %s", res.Status)
 	//c.String(res.String())
+	*/
 }
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
+	r.RedirectTrailingSlash = false
 
 	//r.GET("/ping", respondPing)
 
 	// catchall route
-	r.Any("/*proxyPath", guy)
+	r.GET("*proxyPath", guy)
 	return r
 }
 
