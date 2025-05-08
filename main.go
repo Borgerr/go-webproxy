@@ -1,21 +1,14 @@
 package main
 
 import (
-	//"net/http"
+	"net/http"
 	"github.com/gin-gonic/gin"
 	"flag"
 	"fmt"
-	//"io"
+	"io"
 )
 
-func guy(c *gin.Context) {
-	fmt.Println("GUY CALLED!!!!!!!!!\n\n");
-
-	/*
-	fmt.Println("c.FullPath(): ", c.FullPath())
-	fmt.Println("c.request.URL: ", c.Request.URL)
-	fmt.Println("c.request.URL.path: ", c.Request.URL.Path)
-
+func URLRoute(c *gin.Context) {
 	res, err := http.Get(c.Request.URL.String())
 	if err != nil {
 		fmt.Printf("error making http request: %s\n", err)
@@ -24,11 +17,10 @@ func guy(c *gin.Context) {
 
 	byteString, err := io.ReadAll(res.Body)
 	resString := string(byteString)
-	fmt.Println("resString: %s", resString)
+	//fmt.Println("resString: %s", resString)
 
-	fmt.Println("status for client: %s", res.Status)
-	//c.String(res.String())
-	*/
+	//fmt.Println("status for client: %s", res.Status)
+	c.String(res.StatusCode, resString)
 }
 
 func setupRouter() *gin.Engine {
@@ -38,7 +30,7 @@ func setupRouter() *gin.Engine {
 	//r.GET("/ping", respondPing)
 
 	// catchall route
-	r.GET("*proxyPath", guy)
+	r.GET("*proxyPath", URLRoute)
 	return r
 }
 
